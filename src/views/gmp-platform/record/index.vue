@@ -1,17 +1,21 @@
 <template>
   <div class="app-container">
     <div class="filter-container">
-      <el-button class="filter-item" type="primary" icon="el-icon-plus" @click="handleCreate"
-                 v-if="checkBtnPermission('createAPI')">
+      <el-button
+        v-if="checkBtnPermission('createAPI')"
+        class="filter-item"
+        type="primary"
+        icon="el-icon-plus"
+        @click="handleCreate"
+      >
         新增
       </el-button>
 
-      <el-input v-model="listQuery.request_id" placeholder="请求ID" style="width: 200px;" class="filter-item"/>
-      <el-input v-model="listQuery.template_id" placeholder="模板ID" style="width: 200px;" class="filter-item"/>
+      <el-input v-model="listQuery.request_id" placeholder="请求ID" style="width: 200px;" class="filter-item" />
+      <el-input v-model="listQuery.template_id" placeholder="模板ID" style="width: 200px;" class="filter-item" />
       <el-select v-model="listQuery.channel" placeholder="渠道" clearable style="width: 150px" class="filter-item">
         <el-option v-for="item in channelList" :key="item.channel" :label="item.name" :value="item.channel" />
       </el-select>
-
 
       <el-button v-waves class="filter-item" type="primary" icon="el-icon-search" @click="handleFilter">
         搜索
@@ -20,11 +24,11 @@
     </div>
 
     <el-table
-        v-loading="listLoading"
-        :data="list"
-        border
-        height="70vh"
-        style="width: 100%"
+      v-loading="listLoading"
+      :data="list"
+      border
+      height="70vh"
+      style="width: 100%"
     >
 
       <el-table-column label="ID" prop="id" align="center" width="170px">
@@ -34,7 +38,7 @@
       </el-table-column>
       <el-table-column label="渠道" prop="id" align="center">
         <template slot-scope="{row}">
-          <span>{{ channelFilter(row.channel)}}</span>
+          <span>{{ channelFilter(row.channel) }}</span>
         </template>
       </el-table-column>
       <el-table-column label="模板ID" prop="id" align="center" width="170px">
@@ -79,8 +83,12 @@
       </el-table-column>
     </el-table>
 
-    <pagination  :total="total" :page.sync="listQuery.page" :limit.sync="listQuery.pageSize"
-                @pagination="getList"/>
+    <pagination
+      :total="total"
+      :page.sync="listQuery.page"
+      :limit.sync="listQuery.pageSize"
+      @pagination="getList"
+    />
 
   </div>
 </template>
@@ -88,18 +96,18 @@
 import waves from '@/directive/waves' // waves directive
 import Pagination from '@/components/Pagination' // secondary package based on el-pagination
 import checkBtnPermission from '@/utils/permission'
-import { getMsgRecord,getAllChannel } from '@/api/gmp-platform/msg'
+import { getMsgRecord, getAllChannel } from '@/api/gmp-platform/msg'
 
 export default {
   name: 'Record',
   components: { Pagination },
   directives: { waves },
   filters: {
-    timeToDay (times) {
+    timeToDay(times) {
       return times.slice(0, 10)
-    },
+    }
   },
-  data () {
+  data() {
     return {
       isDisabled: false,
       list: [],
@@ -111,26 +119,26 @@ export default {
         pageSize: 20,
         name: undefined,
         request_id: undefined,
-        template_id: undefined,
+        template_id: undefined
       },
       dialogFormVisible: false,
-      dialogStatus: '',
+      dialogStatus: ''
     }
   },
-  created () {
+  created() {
     this.getList()
     this.getAllChannel()
   },
   methods: {
     checkBtnPermission,
     channelFilter(m) {
-      let map = {}
-      this.channelList.map(r=>{
-        map[r.channel] =r.name
+      const map = {}
+      this.channelList.map(r => {
+        map[r.channel] = r.name
       })
       return map[m]
     },
-    getList () {
+    getList() {
       this.listLoading = true
       getMsgRecord(this.listQuery).then(response => {
         this.list = response.data.rows
@@ -139,15 +147,15 @@ export default {
         this.listLoading = false
       })
     },
-    getAllChannel () {
+    getAllChannel() {
       getAllChannel().then(response => {
         this.channelList = response.data.rows
       })
     },
-    handleFilter () {
+    handleFilter() {
       this.listQuery.page = 1
       this.getList()
-    },
+    }
   }
 }
 </script>

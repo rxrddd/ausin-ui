@@ -5,10 +5,15 @@
         新增
       </el-button>
 
-      <el-input v-model="listQuery.title" placeholder="账号名称" style="width: 200px;" class="filter-item"/>
-      <el-select v-model="listQuery.send_channel" placeholder="发送渠道" clearable style="width: 150px"
-                 class="filter-item">
-        <el-option v-for="item in channelList" :key="item.id" :label="item.name" :value="item.id"/>
+      <el-input v-model="listQuery.title" placeholder="账号名称" style="width: 200px;" class="filter-item" />
+      <el-select
+        v-model="listQuery.send_channel"
+        placeholder="发送渠道"
+        clearable
+        style="width: 150px"
+        class="filter-item"
+      >
+        <el-option v-for="item in channelList" :key="item.id" :label="item.name" :value="item.id" />
       </el-select>
 
       <el-button v-waves class="filter-item" type="primary" icon="el-icon-search" @click="handleFilter">
@@ -18,15 +23,15 @@
     </div>
 
     <el-table
-        v-loading="listLoading"
-        :data="list"
-        border
-        height="70vh"
-        style="width: 100%"
+      v-loading="listLoading"
+      :data="list"
+      border
+      height="70vh"
+      style="width: 100%"
     >
 
-      <el-table-column label="ID" prop="id" align="center"></el-table-column>
-      <el-table-column label="账号名称" prop="title" align="center"></el-table-column>
+      <el-table-column label="ID" prop="id" align="center" />
+      <el-table-column label="账号名称" prop="title" align="center" />
       <el-table-column label="发送渠道" prop="send_channel" align="center">
         <template slot-scope="{row}">
           <span>{{ channelFilter(row.send_channel) }}</span>
@@ -41,26 +46,29 @@
       <el-table-column label="状态" prop="status" align="center">
         <template slot-scope="scoped">
           <el-switch
-              v-model="scoped.row.status"
-              @change="changeStatus($event,scoped.row,scoped.$index)"
-              active-value="0"
-              inactive-value="1"
-          >
-          </el-switch>
+            v-model="scoped.row.status"
+            active-value="0"
+            inactive-value="1"
+            @change="changeStatus($event,scoped.row,scoped.$index)"
+          />
         </template>
       </el-table-column>
 
       <el-table-column label="操作" width="250" class-name="small-padding fixed-width" fixed="right" align="center">
-        <template slot-scope="{row,$index}">
-          <el-button type="primary" size="mini" @click="handleUpdate(row)" v-if="checkBtnPermission('updateMenu')">
+        <template slot-scope="{row}">
+          <el-button v-if="checkBtnPermission('updateMenu')" type="primary" size="mini" @click="handleUpdate(row)">
             编辑
           </el-button>
         </template>
       </el-table-column>
     </el-table>
 
-    <pagination :total="total" :page.sync="listQuery.page" :limit.sync="listQuery.pageSize"
-                @pagination="getList"/>
+    <pagination
+      :total="total"
+      :page.sync="listQuery.page"
+      :limit.sync="listQuery.pageSize"
+      @pagination="getList"
+    />
 
     <el-drawer title="账号配置" :visible.sync="lookDrawerVisible" :with-header="false" size="40%">
 
@@ -68,31 +76,37 @@
         <div slot="header" class="clearfix">
           <span>账号配置</span>
         </div>
-        <json-editor ref="jsonRef" v-model="jsonValue"/>
+        <json-editor ref="jsonRef" v-model="jsonValue" />
       </el-card>
 
     </el-drawer>
 
     <el-dialog
-        :title="form.id > 0 ?'编辑':'新增'"
-        :visible.sync="formVisible"
-        v-if="formVisible"
-        :close-on-click-modal="false"
-        :close-on-press-escape="false"
+      v-if="formVisible"
+      :title="form.id > 0 ?'编辑':'新增'"
+      :visible.sync="formVisible"
+      :close-on-click-modal="false"
+      :close-on-press-escape="false"
     >
-      <el-form ref="dataForm" :rules="rules" :model="form" label-position="left" label-width="100px"
-               style="width: 500px; margin-left:50px;">
-        <el-input v-model="form.id" type="hidden"/>
+      <el-form
+        ref="dataForm"
+        :rules="rules"
+        :model="form"
+        label-position="left"
+        label-width="100px"
+        style="width: 500px; margin-left:50px;"
+      >
+        <el-input v-model="form.id" type="hidden" />
         <el-form-item label="账号名称" prop="name">
-          <el-input v-model="form.title"/>
+          <el-input v-model="form.title" />
         </el-form-item>
         <el-form-item label="发送渠道" prop="name">
           <el-select v-model="form.send_channel" placeholder="请选择发送渠道" clearable>
-            <el-option v-for="item in channelList" :key="item.id" :label="item.name" :value="item.id"/>
+            <el-option v-for="item in channelList" :key="item.id" :label="item.name" :value="item.id" />
           </el-select>
         </el-form-item>
         <el-form-item label="配置json" prop="name">
-          <json-editor ref="formJsonRef" v-model="form.config"/>
+          <json-editor ref="formJsonRef" v-model="form.config" />
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -119,19 +133,19 @@ export default {
   components: { JsonEditor, Pagination },
   directives: { waves },
   filters: {
-    timeToDay (times) {
+    timeToDay(times) {
       return times.slice(0, 10)
     },
-    msgTypeFilter (v) {
+    msgTypeFilter(v) {
       const map = {
         '10': '通知类消息',
         '20': '营销类消息',
-        '30': '验证码类消息',
+        '30': '验证码类消息'
       }
       return map[v] ?? ''
     }
   },
-  data () {
+  data() {
     return {
       isDisabled: false,
       lookDrawerVisible: false,
@@ -144,26 +158,26 @@ export default {
       listQuery: {
         page: 1,
         pageSize: 20,
-        title: undefined,
+        title: undefined
       },
       form: {
         id: undefined,
         title: undefined,
         config: undefined,
-        send_channel: undefined,
+        send_channel: undefined
       },
       rules: {
-        title: [{ required: true, message: '账号名称不得为空', trigger: 'blur' }],
-      },
+        title: [{ required: true, message: '账号名称不得为空', trigger: 'blur' }]
+      }
     }
   },
-  created () {
+  created() {
     this.getList()
     this.getAllChannel()
   },
   methods: {
     checkBtnPermission,
-    getList () {
+    getList() {
       this.listLoading = true
       sendAccountList(this.listQuery).then(response => {
         this.list = response.data.rows
@@ -172,30 +186,30 @@ export default {
         this.listLoading = false
       })
     },
-    channelFilter (m) {
-      let map = {}
+    channelFilter(m) {
+      const map = {}
       this.channelList.map(r => {
         map[r.id] = r.name
       })
       return map[m]
     },
-    openDrawer (row) {
+    openDrawer(row) {
       this.jsonValue = JSON.parse(row.config)
       this.lookDrawerVisible = true
     },
-    getAllChannel () {
+    getAllChannel() {
       getAllChannel().then(response => {
         this.channelList = response.data.rows
       })
     },
-    handleFilter () {
+    handleFilter() {
       this.listQuery.page = 1
       this.getList()
     },
-    changeStatus (e, row, index) {
+    changeStatus(e, row, index) {
       sendAccountChangeStatus({ id: row.id, status: row.status })
     },
-    handleUpdate (row) {
+    handleUpdate(row) {
       this.form = Object.assign({}, row) // copy obj
       this.formVisible = true
       this.form.config = JSON.parse(this.form.config)
@@ -203,14 +217,14 @@ export default {
         this.$refs['dataForm'].clearValidate()
       })
     },
-    handleCreate () {
+    handleCreate() {
       this.formVisible = true
       this.form.config = {}
       this.$nextTick(() => {
         this.$refs['dataForm'].clearValidate()
       })
     },
-    editData () {
+    editData() {
       sendAccountEdit({
         ...this.form,
         config: JSON.stringify(JSON.parse(this.$refs.formJsonRef.getValue()))
@@ -224,9 +238,8 @@ export default {
         this.handleFilter()
         this.formVisible = false
       })
-    },
+    }
   }
 }
 </script>
-
 

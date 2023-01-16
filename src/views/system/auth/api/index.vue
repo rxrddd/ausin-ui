@@ -1,7 +1,7 @@
 <template>
   <div class="app-container">
     <div class="filter-container">
-      <el-button class="filter-item" type="primary" icon="el-icon-plus" @click="handleCreate" v-if="checkBtnPermission('createAPI')">
+      <el-button v-if="checkBtnPermission('createAPI')" class="filter-item" type="primary" icon="el-icon-plus" @click="handleCreate">
         新增
       </el-button>
 
@@ -15,13 +15,13 @@
       <el-button v-waves class="filter-item" type="primary" icon="el-icon-search" @click="handleFilter">
         搜索
       </el-button>
-      
+
     </div>
 
     <el-table
       v-loading="listLoading"
       :data="list"
-      border 
+      border
       style="width: 100%;"
     >
       <el-table-column label="ID" prop="id" align="center">
@@ -29,7 +29,7 @@
           <span>{{ row.id }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="分组" prop="id" align="center"> 
+      <el-table-column label="分组" prop="id" align="center">
         <template slot-scope="{row}">
           <span>{{ row.group }}</span>
         </template>
@@ -51,20 +51,20 @@
       </el-table-column>
       <el-table-column label="创建时间" prop="createdAt" align="center">
         <template slot-scope="{row}">
-          <span>{{ row.created_at | timeToDay}}</span>
+          <span>{{ row.created_at | timeToDay }}</span>
         </template>
       </el-table-column>
       <el-table-column label="更新时间" prop="updatedAt" align="center">
         <template slot-scope="{row}">
-          <span>{{ row.updated_at | timeToDay}}</span>
+          <span>{{ row.updated_at | timeToDay }}</span>
         </template>
       </el-table-column>
       <el-table-column label="操作" align="center" width="250" class-name="small-padding fixed-width">
         <template slot-scope="{row,$index}">
-          <el-button type="primary" size="mini" @click="handleUpdate(row)" v-if="checkBtnPermission('updateAPI')">
+          <el-button v-if="checkBtnPermission('updateAPI')" type="primary" size="mini" @click="handleUpdate(row)">
             编辑
           </el-button>
-          <el-button size="mini" type="danger" @click="handleDelete(row,$index)"  v-if="checkBtnPermission('deleteAPI')">
+          <el-button v-if="checkBtnPermission('deleteAPI')" size="mini" type="danger" @click="handleDelete(row,$index)">
             删除
           </el-button>
         </template>
@@ -75,26 +75,26 @@
 
     <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible">
       <el-form ref="dataForm" :rules="rules" :model="temp" label-position="left" label-width="100px" style="width: 500px; margin-left:50px;">
-        <el-form-item label="ID" prop="id" v-if="temp.id != undefined">
-          <el-input v-model="temp.id"/>
+        <el-form-item v-if="temp.id != undefined" label="ID" prop="id">
+          <el-input v-model="temp.id" />
         </el-form-item>
 
         <el-form-item label="分组名称" prop="group">
-          <el-input v-model="temp.group"/>
+          <el-input v-model="temp.group" />
         </el-form-item>
 
         <el-form-item label="名称" prop="name">
-          <el-input v-model="temp.name"/>
+          <el-input v-model="temp.name" />
         </el-form-item>
-        
+
         <el-form-item label="请求方式" prop="group">
           <el-select v-model="temp.method" placeholder="请求方式" clearable style="width: 150px" class="filter-item">
-          <el-option v-for="item in method" :key="item" :label="item" :value="item" />
-        </el-select>
+            <el-option v-for="item in method" :key="item" :label="item" :value="item" />
+          </el-select>
         </el-form-item>
 
         <el-form-item label="请求路径" prop="group">
-          <el-input v-model="temp.path"/>
+          <el-input v-model="temp.path" />
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -110,7 +110,7 @@
 </template>
 
 <script>
-import { listApi, createApi, updateApi, deleteApi} from '@/api/auth/api'
+import { listApi, createApi, updateApi, deleteApi } from '@/api/auth/api'
 import waves from '@/directive/waves' // waves directive
 import Pagination from '@/components/Pagination' // secondary package based on el-pagination
 import { getDate } from '@/utils/index.js'
@@ -123,11 +123,11 @@ export default {
   filters: {
     timeToDay(times) {
       return times.slice(0, 10)
-    },
+    }
   },
   data() {
     return {
-      isDisabled:false,
+      isDisabled: false,
       list: null,
       total: 0,
       listLoading: true,
@@ -137,15 +137,15 @@ export default {
         name: undefined,
         group: undefined,
         path: undefined,
-        method: undefined,
+        method: undefined
       },
-      method: ["GET", "POST", "PUT", "PATCH", "DELETE"],
+      method: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE'],
       temp: {
         id: undefined,
         name: undefined,
         group: undefined,
         path: undefined,
-        method: undefined,
+        method: undefined
       },
       dialogFormVisible: false,
       dialogStatus: '',
@@ -157,8 +157,8 @@ export default {
         group: [{ required: true, message: '分组名称不得为空', trigger: 'blur' }],
         name: [{ required: true, message: 'api名称不得为空', trigger: 'blur' }],
         method: [{ required: true, message: '请求方式不得为空', trigger: 'blur' }],
-        path: [{ required: true, message: '请求路径不得为空', trigger: 'blur' }],
-      },
+        path: [{ required: true, message: '请求路径不得为空', trigger: 'blur' }]
+      }
     }
   },
   created() {
@@ -186,13 +186,13 @@ export default {
       row.status = status
     },
     resetTemp() {
-      this.isDisabled = false;
+      this.isDisabled = false
       this.temp = {
         id: undefined,
         name: undefined,
         group: undefined,
         path: undefined,
-        method: undefined,
+        method: undefined
       }
     },
     handleCreate() {
@@ -221,7 +221,7 @@ export default {
     },
     handleUpdate(row) {
       this.temp = Object.assign({}, row) // copy obj
-      this.isDisabled = true;
+      this.isDisabled = true
       this.dialogStatus = 'update'
       this.dialogFormVisible = true
       this.$nextTick(() => {
@@ -246,9 +246,9 @@ export default {
         }
       })
     },
-   
+
     handleDelete(row, index) {
-      deleteApi({id:row.id}).then(() => {
+      deleteApi({ id: row.id }).then(() => {
         this.list.splice(index, 1)
         this.$notify({
           title: 'Success',

@@ -1,7 +1,7 @@
 <template>
   <div class="app-container">
     <div class="filter-container">
-      <el-button class="filter-item" type="primary" icon="el-icon-plus" @click="handleCreate(0)" v-if="checkBtnPermission('createRole')">
+      <el-button v-if="checkBtnPermission('createRole')" class="filter-item" type="primary" icon="el-icon-plus" @click="handleCreate(0)">
         新增
       </el-button>
     </div>
@@ -20,19 +20,19 @@
       </el-table-column>
       <el-table-column label="操作" align="center" width="500" class-name="small-padding fixed-width">
         <template slot-scope="{row,$index}">
-          <el-button type="warning" size="mini" @click="openDrawer(row)" v-if="checkBtnPermission('setRolePermission')">
+          <el-button v-if="checkBtnPermission('setRolePermission')" type="warning" size="mini" @click="openDrawer(row)">
             设置权限
           </el-button>
-          <el-button type="primary" size="mini" @click="handleChildRole(row)" v-if="checkBtnPermission('createRole')">
+          <el-button v-if="checkBtnPermission('createRole')" type="primary" size="mini" @click="handleChildRole(row)">
             新增子角色
           </el-button>
-          <el-button type="primary" size="mini" @click="handleUpdate(row)" v-if="checkBtnPermission('updateRole')">
+          <el-button v-if="checkBtnPermission('updateRole')" type="primary" size="mini" @click="handleUpdate(row)">
             编辑
           </el-button>
-          <el-button size="mini" type="danger" @click="handleDelete(row, $index)" v-if="checkBtnPermission('deleteRole')">
+          <el-button v-if="checkBtnPermission('deleteRole')" size="mini" type="danger" @click="handleDelete(row, $index)">
             删除
           </el-button>
-          <el-button size="mini" type="success" @click="viewAdministrator(row, $index)" v-if="checkBtnPermission('getRoleMembers')">
+          <el-button v-if="checkBtnPermission('getRoleMembers')" size="mini" type="success" @click="viewAdministrator(row, $index)">
             查看成员
           </el-button>
         </template>
@@ -40,16 +40,26 @@
     </el-table>
 
     <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible">
-      <el-form ref="dataForm" :rules="rules" :model="temp" label-position="left" label-width="100px"
-        style="width: 500px; margin-left:50px;">
-        <el-form-item label="ID" prop="id" v-if="dialogStatus === 'update'">
+      <el-form
+        ref="dataForm"
+        :rules="rules"
+        :model="temp"
+        label-position="left"
+        label-width="100px"
+        style="width: 500px; margin-left:50px;"
+      >
+        <el-form-item v-if="dialogStatus === 'update'" label="ID" prop="id">
           <el-input v-model="temp.id" />
         </el-form-item>
         <el-form-item label="父级角色" prop="parent_ids">
-          <el-cascader v-model="temp.parent_ids" :options="roleOptions" style="width:100%"
-            :props="{ checkStrictly: true, label: 'name', value: 'id', emitPath: 'true' }" :show-all-levels="false"
-            @change="handleChange">
-          </el-cascader>
+          <el-cascader
+            v-model="temp.parent_ids"
+            :options="roleOptions"
+            style="width:100%"
+            :props="{ checkStrictly: true, label: 'name', value: 'id', emitPath: 'true' }"
+            :show-all-levels="false"
+            @change="handleChange"
+          />
         </el-form-item>
         <el-form-item label="角色名称" prop="name">
           <el-input v-model="temp.name" />
@@ -69,15 +79,29 @@
         <el-tab-pane label="角色菜单">
           <div>
             <el-input v-model="filterMenuText" style="width: 60%;" placeholder="筛选" />
-            <el-button style="float: right;" size="small" type="primary" @click="saveMenu" v-if="checkBtnPermission('setRoleMenuPermission')">确 定</el-button>
+            <el-button v-if="checkBtnPermission('setRoleMenuPermission')" style="float: right;" size="small" type="primary" @click="saveMenu">确 定</el-button>
           </div>
           <div class="tree-content">
-            <el-tree :data="menuData" show-checkbox node-key="id" default-expand-all highlight-current ref="menuData"
-              :default-checked-keys="menuCheckedIds" :props="menuDataProps" :filter-node-method="filterMenuNode">
-              <span class="custom-tree-node" slot-scope="{ node, menuData }">
+            <el-tree
+              ref="menuData"
+              :data="menuData"
+              show-checkbox
+              node-key="id"
+              default-expand-all
+              highlight-current
+              :default-checked-keys="menuCheckedIds"
+              :props="menuDataProps"
+              :filter-node-method="filterMenuNode"
+            >
+              <span slot-scope="{ node, menuData }" class="custom-tree-node">
                 <span>{{ node.label }}</span>
-                <el-button type="text" style="margin-left:10px" v-if="(node.data.menuBtns.length > 0)" size="small"
-                  @click="() => assignBtn(node)">
+                <el-button
+                  v-if="(node.data.menuBtns.length > 0)"
+                  type="text"
+                  style="margin-left:10px"
+                  size="small"
+                  @click="() => assignBtn(node)"
+                >
                   分配按钮
                 </el-button>
               </span>
@@ -87,12 +111,20 @@
         <el-tab-pane label="角色api">
           <div>
             <el-input v-model="filterApiText" style="width: 60%;" placeholder="筛选" />
-            <el-button style="float: right;" size="small" type="primary" @click="saveApi" v-if="checkBtnPermission('setRoleAPIPermission')">确 定</el-button>
+            <el-button v-if="checkBtnPermission('setRoleAPIPermission')" style="float: right;" size="small" type="primary" @click="saveApi">确 定</el-button>
           </div>
           <div class="tree-content">
-            <el-tree :data="apiData" show-checkbox node-key="id" default-expand-all highlight-current ref="apiData"
-              :default-checked-keys="apiCheckedIds" :props="apiDataProps" :filter-node-method="filterApiNode">
-            </el-tree>
+            <el-tree
+              ref="apiData"
+              :data="apiData"
+              show-checkbox
+              node-key="id"
+              default-expand-all
+              highlight-current
+              :default-checked-keys="apiCheckedIds"
+              :props="apiDataProps"
+              :filter-node-method="filterApiNode"
+            />
           </div>
 
         </el-tab-pane>
@@ -108,7 +140,7 @@
       <template #footer>
         <div class="dialog-footer">
           <el-button size="small" @click="closeDialog">取 消</el-button>
-          <el-button size="small" type="primary" @click="saveBtn" v-if="checkBtnPermission('setRoleMenuButtonPermission')">确 定</el-button>
+          <el-button v-if="checkBtnPermission('setRoleMenuButtonPermission')" size="small" type="primary" @click="saveBtn">确 定</el-button>
         </div>
       </template>
     </el-dialog>
@@ -122,7 +154,7 @@
         </el-table-column>
         <el-table-column label="操作" prop="row" align="center">
           <template slot-scope="{row,$index}">
-            <el-button size="mini" type="danger" @click="removeRole(row, $index)" v-if="checkBtnPermission('removeRoleMember')">
+            <el-button v-if="checkBtnPermission('removeRoleMember')" size="mini" type="danger" @click="removeRole(row, $index)">
               移除
             </el-button>
           </template>
@@ -145,19 +177,11 @@ export default {
   filters: {
     timeToDay(times) {
       return times.slice(0, 10)
-    },
-  },
-  watch: {
-    filterMenuText(val) {
-      this.$refs.menuData.filter(val);
-    },
-    filterApiText(val) {
-      this.$refs.apiData.filter(val);
-    },
+    }
   },
   data() {
     return {
-      currentRole: "",
+      currentRole: '',
       roleAdministratorList: [],
       roleAdministratorVisible: false,
       btnVisible: false,
@@ -185,7 +209,7 @@ export default {
       roleOptions: [
         {
           id: 0,
-          name: '根角色',
+          name: '根角色'
         }
       ],
       roleTreeProps: {
@@ -196,13 +220,13 @@ export default {
       listLoading: true,
       listQuery: {
         page: 1,
-        limit: 20,
+        limit: 20
       },
       temp: {
         id: undefined,
         name: undefined,
         parent_id: undefined,
-        parent_ids: undefined,
+        parent_ids: undefined
       },
       dialogFormVisible: false,
       dialogStatus: '',
@@ -212,8 +236,16 @@ export default {
       },
       selectedBtnIds: [],
       rules: {
-        name: [{ required: true, message: '角色名称不得为空', trigger: 'blur' }],
-      },
+        name: [{ required: true, message: '角色名称不得为空', trigger: 'blur' }]
+      }
+    }
+  },
+  watch: {
+    filterMenuText(val) {
+      this.$refs.menuData.filter(val)
+    },
+    filterApiText(val) {
+      this.$refs.apiData.filter(val)
     }
   },
   created() {
@@ -281,7 +313,7 @@ export default {
         id: undefined,
         name: undefined,
         parent_id: undefined,
-        parent_ids: undefined,
+        parent_ids: undefined
       }
     },
     handleCreate(parent_id) {
@@ -302,7 +334,7 @@ export default {
       this.dialogFormVisible = true
       // 删除首个根元素
       var tmpparent_ids = row.parent_ids
-      if (row.parent_ids[0] == "0") {
+      if (row.parent_ids[0] == '0') {
         tmpparent_ids.pop()
       }
       tmpparent_ids.push(row.id + '')
@@ -333,7 +365,7 @@ export default {
       this.temp = Object.assign({}, row) // copy obj
       this.dialogStatus = 'update'
       this.dialogFormVisible = true
-      if (row.parent_id == "0") {
+      if (row.parent_id == '0') {
         this.temp.parent_ids = [0]
       }
       this.setOptions()
@@ -404,13 +436,13 @@ export default {
             }
             this.setRoleOptions(
               item.children,
-              option.children,
+              option.children
             )
             optionsData.push(option)
           } else {
             const option = {
               id: item.id,
-              name: item.name,
+              name: item.name
             }
             optionsData.push(option)
           }
@@ -420,15 +452,15 @@ export default {
       this.currentRow = row
       this.drawer = true
       getRoleMenu({ role: row.name }).then(response => {
-        this.$refs.menuData.setCheckedKeys([]);
-        this.tmpMenuCheckedIds = [];
+        this.$refs.menuData.setCheckedKeys([])
+        this.tmpMenuCheckedIds = []
         this.setRoleMenuChecked(response.data.list)
         this.menuCheckedIds = this.tmpMenuCheckedIds
       })
       getRolePolicies({ role: row.name }).then(response => {
         const apis = response.data.policyRules
-        this.tmpApiCheckedIds = [];
-        this.$refs.apiData.setCheckedKeys([]);
+        this.tmpApiCheckedIds = []
+        this.$refs.apiData.setCheckedKeys([])
         apis.forEach(item => {
           this.tmpApiCheckedIds.push('path:' + item.path + '-' + 'method:' + item.method)
         })
@@ -446,22 +478,22 @@ export default {
       })
     },
     filterMenuNode(value, data) {
-      if (!value) return true;
-      return data.title.indexOf(value) !== -1;
+      if (!value) return true
+      return data.title.indexOf(value) !== -1
     },
     filterApiNode(value, data) {
-      if (!value) return true;
-      return data.name.indexOf(value) !== -1;
+      if (!value) return true
+      return data.name.indexOf(value) !== -1
     },
     saveMenu() {
       const checkArr = this.$refs.menuData.getCheckedNodes(false, true)
-      const menuIds = [];
+      const menuIds = []
       checkArr.forEach(item => {
         menuIds.push(item.id)
       })
       saveRoleMenu({
-        "role_id": this.currentRow.id,
-        "menu_ids": menuIds
+        'role_id': this.currentRow.id,
+        'menu_ids': menuIds
       }).then(() => {
         this.$notify({
           title: 'Success',
@@ -474,19 +506,19 @@ export default {
     saveApi() {
       const checkArr = this.$refs.apiData.getCheckedNodes(false, true)
 
-      const policyRules = [];
+      const policyRules = []
       checkArr.forEach(item => {
         // 只获取有效api，不获取分组名称
         if (item.created_at != undefined) {
           policyRules.push({
-            "path": item.path,
-            "method": item.method,
+            'path': item.path,
+            'method': item.method
           })
         }
       })
       saveRolePolicies({
-        "role": this.currentRow.name,
-        "policyRules": policyRules
+        'role': this.currentRow.name,
+        'policyRules': policyRules
       }).then(() => {
         this.$notify({
           title: 'Success',
@@ -503,7 +535,7 @@ export default {
 
       node.data.menuBtns.forEach(menuBtn => {
         this.btnData.push(menuBtn)
-      });
+      })
       // 获取当前角色拥有的菜单按钮
       getRoleMenuBtn({ role_id: this.currentRow.id, menu_id: node.data.id }).then(response => {
         this.btnData.forEach(item => {
@@ -533,10 +565,10 @@ export default {
       this.btnData = []
     },
     handleSelectChange(val) {
-      this.selectedBtnIds = [];
+      this.selectedBtnIds = []
       val.forEach(element => {
         this.selectedBtnIds.push(element.id)
-      });
+      })
     }
   }
 }

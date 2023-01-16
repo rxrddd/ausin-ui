@@ -1,7 +1,7 @@
 <template>
   <div class="app-container">
     <div class="filter-container">
-      <el-button class="filter-item" type="primary" icon="el-icon-plus" @click="handleCreate(0)" v-if="checkBtnPermission('createMenu')">
+      <el-button v-if="checkBtnPermission('createMenu')" class="filter-item" type="primary" icon="el-icon-plus" @click="handleCreate(0)">
         新增
       </el-button>
     </div>
@@ -12,7 +12,7 @@
       <el-table-column label="图标" min-width="180" prop="icon" align="center">
         <template #default="scope">
           <div v-if="scope.row.icon">
-            <i :class="scope.row.icon"></i>
+            <i :class="scope.row.icon" />
             <span style="margin-left:5px;">{{ scope.row.icon }}</span>
           </div>
         </template>
@@ -38,13 +38,13 @@
       </el-table-column>
       <el-table-column label="操作" width="250" class-name="small-padding fixed-width" fixed="right">
         <template slot-scope="{row,$index}">
-          <el-button type="primary" size="mini" @click="handleChildMenu(row)" v-if="checkBtnPermission('createMenu')">
+          <el-button v-if="checkBtnPermission('createMenu')" type="primary" size="mini" @click="handleChildMenu(row)">
             新增子菜单
           </el-button>
-          <el-button type="primary" size="mini" @click="handleUpdate(row)" v-if="checkBtnPermission('updateMenu')">
+          <el-button v-if="checkBtnPermission('updateMenu')" type="primary" size="mini" @click="handleUpdate(row)">
             编辑
           </el-button>
-          <el-button size="mini" type="danger" @click="handleDelete(row)" v-if="checkBtnPermission('deleteMenu')">
+          <el-button v-if="checkBtnPermission('deleteMenu')" size="mini" type="danger" @click="handleDelete(row)">
             删除
           </el-button>
         </template>
@@ -52,22 +52,32 @@
     </el-table>
 
     <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible">
-      <el-form ref="dataForm" :rules="rules" :model="temp" label-position="left" label-width="150px"
-        style="width: 550px; margin-left:50px;">
-        <el-form-item label="ID" prop="id" v-if="dialogStatus === 'update'">
+      <el-form
+        ref="dataForm"
+        :rules="rules"
+        :model="temp"
+        label-position="left"
+        label-width="150px"
+        style="width: 550px; margin-left:50px;"
+      >
+        <el-form-item v-if="dialogStatus === 'update'" label="ID" prop="id">
           <el-input v-model="temp.id" />
         </el-form-item>
         <el-form-item label="父级菜单" prop="parent_ids">
-          <el-cascader v-model="temp.parent_ids" :options="menuOptions" style="width:100%"
-            :props="{ checkStrictly: true, label: 'title', value: 'id', emitPath: 'true' }" :show-all-levels="false"
-            @change="handleChange">
-          </el-cascader>
+          <el-cascader
+            v-model="temp.parent_ids"
+            :options="menuOptions"
+            style="width:100%"
+            :props="{ checkStrictly: true, label: 'title', value: 'id', emitPath: 'true' }"
+            :show-all-levels="false"
+            @change="handleChange"
+          />
         </el-form-item>
         <el-form-item label="菜单名称" prop="title">
           <el-input v-model="temp.title" />
         </el-form-item>
         <el-form-item label="路由路径" prop="path">
-          <el-input v-model="temp.path" placeholder="/xxx/xxx"/>
+          <el-input v-model="temp.path" placeholder="/xxx/xxx" />
         </el-form-item>
         <el-form-item label="路由name" prop="name">
           <el-input v-model="temp.name" />
@@ -77,24 +87,29 @@
           <el-radio v-model="temp.hidden" label="0">否</el-radio>
         </el-form-item>
         <el-form-item label="前端文件路径" prop="component">
-          <el-input v-model="temp.component" placeholder="/xxx/xxx/index"/>
+          <el-input v-model="temp.component" placeholder="/xxx/xxx/index" />
         </el-form-item>
         <el-form-item label="排序" prop="sort">
           <el-input v-model="temp.sort" />
         </el-form-item>
         <el-form-item label="图标" prop="icon">
-          <el-select placeholder="请选择" v-model="temp.icon" filterable>
+          <el-select v-model="temp.icon" placeholder="请选择" filterable>
             <el-option v-for=" item in elementIcons" :label="'el-icon-' + item" :value="'el-icon-' + item">
-              <i :class="'el-icon-' + item"></i>
+              <i :class="'el-icon-' + item" />
               {{ item }}
             </el-option>
           </el-select>
         </el-form-item>
-        <el-button style="margin-top:12px" size="small" type="primary" icon="el-icon-plus"
-          @click="addBtn()">新增可控按钮</el-button>
-        <el-form-item v-for="(item, i) in menuBtns" :key="item.id"  :label="'按钮' + (i + 1)"  :rules="{required: true, message: '按钮不能为空', trigger: 'blur'}">
-          <el-input v-model="item.name" style="width:150px; float: left; " placeholder="请输入按钮名称"/>
-          <el-input v-model="item.description" style="width:150px; float: left; margin-left: 15px;" placeholder="请输入按钮描述"/>
+        <el-button
+          style="margin-top:12px"
+          size="small"
+          type="primary"
+          icon="el-icon-plus"
+          @click="addBtn()"
+        >新增可控按钮</el-button>
+        <el-form-item v-for="(item, i) in menuBtns" :key="item.id" :label="'按钮' + (i + 1)" :rules="{required: true, message: '按钮不能为空', trigger: 'blur'}">
+          <el-input v-model="item.name" style="width:150px; float: left; " placeholder="请输入按钮名称" />
+          <el-input v-model="item.description" style="width:150px; float: left; margin-left: 15px;" placeholder="请输入按钮描述" />
           <el-button type="danger" style="float: left; margin-left: 15px;" @click="deleteBtn(i)">删除</el-button>
         </el-form-item>
       </el-form>
@@ -129,15 +144,7 @@ export default {
     },
     timeToDay(times) {
       return times.slice(0, 10)
-    },
-  },
-  watch: {
-    filterMenuText(val) {
-      this.$refs.menuData.filter(val);
-    },
-    filterApiText(val) {
-      this.$refs.apiData.filter(val);
-    },
+    }
   },
   data() {
     return {
@@ -145,7 +152,7 @@ export default {
       menuOptions: [
         {
           id: 0,
-          title: '根菜单',
+          title: '根菜单'
         }
       ],
       list: [],
@@ -161,8 +168,8 @@ export default {
         title: undefined,
         icon: undefined,
         redirect: undefined,
-        parent_ids:[],
-        menuBtns: [],
+        parent_ids: [],
+        menuBtns: []
       },
       dialogFormVisible: false,
       dialogStatus: '',
@@ -177,8 +184,16 @@ export default {
         hidden: [{ required: true, message: '是否隐藏不得为空', trigger: 'blur' }],
         component: [{ required: true, message: '前端文件路径不得为空', trigger: 'blur' }],
         sort: [{ required: true, message: '排序不得为空', trigger: 'blur' }],
-        icon: [{ required: true, message: 'icon不得为空', trigger: 'blur' }],
-      },
+        icon: [{ required: true, message: 'icon不得为空', trigger: 'blur' }]
+      }
+    }
+  },
+  watch: {
+    filterMenuText(val) {
+      this.$refs.menuData.filter(val)
+    },
+    filterApiText(val) {
+      this.$refs.apiData.filter(val)
     }
   },
   created() {
@@ -204,8 +219,8 @@ export default {
         title: undefined,
         icon: undefined,
         redirect: undefined,
-        parent_ids:[],
-        menuBtns: [],
+        parent_ids: [],
+        menuBtns: []
       }
       this.menuBtns = []
     },
@@ -246,7 +261,7 @@ export default {
       this.temp = Object.assign({}, row) // copy obj
       this.dialogStatus = 'update'
       this.dialogFormVisible = true
-      if (row.parent_id == "0") {
+      if (row.parent_id == '0') {
         this.temp.parent_ids = [0]
       }
       this.setOptions()
@@ -306,13 +321,13 @@ export default {
             }
             this.setMenuOptions(
               item.children,
-              option.children,
+              option.children
             )
             optionsData.push(option)
           } else {
             const option = {
               id: item.id,
-              title: item.title,
+              title: item.title
             }
             optionsData.push(option)
           }
@@ -325,7 +340,7 @@ export default {
       }
       this.menuBtns.push({
         name: '',
-        description: '',
+        description: ''
       })
     },
     // 删除按钮
@@ -338,7 +353,7 @@ export default {
       this.dialogFormVisible = true
       // 删除首个根元素
       var tmpparent_ids = row.parent_ids
-      if (row.parent_ids[0] == "0") {
+      if (row.parent_ids[0] == '0') {
         tmpparent_ids.pop()
       }
       tmpparent_ids.push(row.id + '')
@@ -347,7 +362,7 @@ export default {
       this.$nextTick(() => {
         this.$refs['dataForm'].clearValidate()
       })
-    },
+    }
   }
 }
 </script>

@@ -42,7 +42,7 @@
       </el-form-item>
 
       <el-button :loading="loading" type="primary" style="width:100%;margin-bottom:30px;" @click.native.prevent="handleLogin">Login</el-button>
-      
+
       <div style="position:relative">
         <div class="tips">
           <span>超级管理员 : </span>

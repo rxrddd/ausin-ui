@@ -1,36 +1,36 @@
 <template>
   <div class="app-container">
     <div class="filter-container">
-      <el-button class="filter-item" type="primary" icon="el-icon-plus" @click="handleCreate" v-if="checkBtnPermission('createAdministrator')">
+      <el-button v-if="checkBtnPermission('createAdministrator')" class="filter-item" type="primary" icon="el-icon-plus" @click="handleCreate">
         新增
       </el-button>
 
       <el-input v-model="listQuery.mobile" placeholder="手机号" style="width: 200px;" class="filter-item" @keyup.enter.native="handleFilter" />
-      
+
       <el-input v-model="listQuery.username" placeholder="用户名" style="width: 200px;" class="filter-item" @keyup.enter.native="handleFilter" />
-      
+
       <el-select v-model="listQuery.status" placeholder="状态" clearable class="filter-item" style="width: 130px">
         <el-option v-for="item in statusOptions" :key="item.key" :label="item.display_name" :value="item.key" />
       </el-select>
-      
+
       <el-date-picker
-      v-model="createdSearch"
-      type="daterange"
-      range-separator="至"
-      start-placeholder="创建开始日期"
-      end-placeholder="创建结束日期">
-    </el-date-picker>
+        v-model="createdSearch"
+        type="daterange"
+        range-separator="至"
+        start-placeholder="创建开始日期"
+        end-placeholder="创建结束日期"
+      />
 
       <el-button v-waves class="filter-item" type="primary" icon="el-icon-search" @click="handleFilter">
         搜索
       </el-button>
-      
+
     </div>
 
     <el-table
       v-loading="listLoading"
       :data="list"
-      border 
+      border
       style="width: 100%;"
     >
       <el-table-column label="ID" prop="id" align="center" width="50">
@@ -61,13 +61,13 @@
       <el-table-column label="状态" class-name="status-col">
         <template slot-scope="{row}">
           <el-tag :type="row.status | statusTagFilter">
-            {{ row.status | statusFilter}}
+            {{ row.status | statusFilter }}
           </el-tag>
         </template>
       </el-table-column>
       <el-table-column label="登录时间" prop="lastLoginTime" align="center">
         <template slot-scope="{row}">
-          <span>{{ row.last_login_time  | timeToDay}}</span>
+          <span>{{ row.last_login_time | timeToDay }}</span>
         </template>
       </el-table-column>
       <el-table-column label="登录ip" prop="lastLoginIp" align="center">
@@ -77,22 +77,22 @@
       </el-table-column>
       <el-table-column label="创建时间" prop="createdAt" align="center">
         <template slot-scope="{row}">
-          <span>{{ row.created_at | timeToDay}}</span>
+          <span>{{ row.created_at | timeToDay }}</span>
         </template>
       </el-table-column>
       <el-table-column label="更新时间" prop="updatedAt" align="center">
         <template slot-scope="{row}">
-          <span>{{ row.updated_at | timeToDay}}</span>
+          <span>{{ row.updated_at | timeToDay }}</span>
         </template>
       </el-table-column>
       <el-table-column label="删除时间" prop="updatedAt" align="center">
         <template slot-scope="{row}">
-          <span>{{ row.deleted_at | timeToDay}}</span>
+          <span>{{ row.deleted_at | timeToDay }}</span>
         </template>
       </el-table-column>
       <el-table-column label="操作" align="center" width="250" class-name="small-padding fixed-width">
         <template slot-scope="{row,$index}">
-          <el-button type="primary" size="mini" @click="handleUpdate(row)" v-if="checkBtnPermission('updateAdministrator')">
+          <el-button v-if="checkBtnPermission('updateAdministrator')" type="primary" size="mini" @click="handleUpdate(row)">
             编辑
           </el-button>
           <el-button v-if="row.deleted_at == '' && checkBtnPermission('deleteRecoverAdministrator')" size="mini" type="danger" @click="handleDelete(row,$index)">
@@ -115,14 +115,14 @@
 
     <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible">
       <el-form ref="dataForm" :rules="rules" :model="temp" label-position="left" label-width="70px" style="width: 400px; margin-left:50px;">
-        <el-form-item label="ID" prop="id" v-if="dialogStatus!=='create'">
-          <el-input v-model="temp.id"/>
+        <el-form-item v-if="dialogStatus!=='create'" label="ID" prop="id">
+          <el-input v-model="temp.id" />
         </el-form-item>
         <el-form-item label="用户名" prop="username">
-          <el-input v-model="temp.username" :disabled="isDisabled"/>
+          <el-input v-model="temp.username" :disabled="isDisabled" />
         </el-form-item>
         <el-form-item label="密码" prop="password">
-          <el-input v-model="temp.password"/>
+          <el-input v-model="temp.password" />
         </el-form-item>
         <el-form-item label="昵称" prop="nickname">
           <el-input v-model="temp.nickname" />
@@ -139,10 +139,14 @@
           </el-select>
         </el-form-item>
         <el-form-item label="角色" prop="roles">
-          <el-cascader v-model="selectedRoles" :options="roleOptions" style="width:100%"
-            :props="{ multiple: true, checkStrictly: true, label: 'name', value: 'name', emitPath: 'true' }" :show-all-levels="false"
-            @change="handleChange">
-          </el-cascader>
+          <el-cascader
+            v-model="selectedRoles"
+            :options="roleOptions"
+            style="width:100%"
+            :props="{ multiple: true, checkStrictly: true, label: 'name', value: 'name', emitPath: 'true' }"
+            :show-all-levels="false"
+            @change="handleChange"
+          />
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -158,8 +162,8 @@
 </template>
 
 <script>
-import { listAdministrator, createAdministrator, updateAdministrator, deleteAdministrator, recoverAdministrator, forbidAdministrator, approveAdministrator} from '@/api/administrator'
-import { listRole, saveAdministratorRole, getAdministratorRole} from '@/api/auth/role'
+import { listAdministrator, createAdministrator, updateAdministrator, deleteAdministrator, recoverAdministrator, forbidAdministrator, approveAdministrator } from '@/api/administrator'
+import { listRole, saveAdministratorRole, getAdministratorRole } from '@/api/auth/role'
 import waves from '@/directive/waves' // waves directive
 import Pagination from '@/components/Pagination' // secondary package based on el-pagination
 import { getDate, parseTime } from '@/utils/index.js'
@@ -167,7 +171,7 @@ import checkBtnPermission from '@/utils/permission'
 
 const statusOptions = [
   { key: '1', display_name: '正常' },
-  { key: '2', display_name: '禁用' },
+  { key: '2', display_name: '禁用' }
 ]
 
 // arr to obj, such as { CN : "China", US : "USA" }
@@ -188,7 +192,7 @@ export default {
       }
       return statusMap[status]
     },
-    statusTagFilter(status){
+    statusTagFilter(status) {
       const statusMap = {
         1: 'success',
         2: 'danger'
@@ -197,17 +201,17 @@ export default {
     },
     timeToDay(times) {
       return times.slice(0, 10)
-    },
+    }
   },
   data() {
     return {
-      selectedRoles:[],
+      selectedRoles: [],
       roleList: [],
       roleOptions: [
-        
+
       ],
-      isDisabled:false,
-      createdSearch:'',
+      isDisabled: false,
+      createdSearch: '',
       statusOptions,
       list: null,
       total: 0,
@@ -219,7 +223,7 @@ export default {
         username: undefined,
         status: undefined,
         created_at_start: undefined,
-        created_at_end: undefined,
+        created_at_end: undefined
       },
       temp: {
         id: undefined,
@@ -229,7 +233,7 @@ export default {
         mobile: undefined,
         nickname: undefined,
         avatar: undefined,
-        roles: undefined,
+        roles: undefined
       },
       dialogFormVisible: false,
       dialogStatus: '',
@@ -243,7 +247,7 @@ export default {
         nickname: [{ required: true, message: '昵称不得为空', trigger: 'blur' }],
         password: [{ required: true, message: '密码不得为空', trigger: 'change' }],
         mobile: [{ required: true, message: '手机号不得为空', trigger: 'blur' }],
-        avatar: [{ required: true, message: '头像不得为空', trigger: 'blur' }],
+        avatar: [{ required: true, message: '头像不得为空', trigger: 'blur' }]
       },
       downloadLoading: false
     }
@@ -270,12 +274,12 @@ export default {
       })
     },
     handleFilter() {
-      if(this.createdSearch != ''){
-        this.listQuery.created_at_start = parseTime(this.createdSearch[0], "{y}-{m}-{d}")
-        this.listQuery.created_at_end = parseTime(this.createdSearch[1], "{y}-{m}-{d}")
-      }else{
-        this.listQuery.created_at_start = ""
-        this.listQuery.created_at_end = ""
+      if (this.createdSearch != '') {
+        this.listQuery.created_at_start = parseTime(this.createdSearch[0], '{y}-{m}-{d}')
+        this.listQuery.created_at_end = parseTime(this.createdSearch[1], '{y}-{m}-{d}')
+      } else {
+        this.listQuery.created_at_start = ''
+        this.listQuery.created_at_end = ''
       }
       this.listQuery.page = 1
       this.getList()
@@ -288,7 +292,7 @@ export default {
       row.status = status
     },
     resetTemp() {
-      this.isDisabled = false;
+      this.isDisabled = false
       this.temp = {
         id: undefined,
         status: undefined,
@@ -297,7 +301,7 @@ export default {
         mobile: undefined,
         nickname: undefined,
         avatar: undefined,
-        roles: undefined,
+        roles: undefined
       }
     },
     handleCreate() {
@@ -314,7 +318,7 @@ export default {
       this.$refs['dataForm'].validate((valid) => {
         if (valid) {
           this.temp.id = 0
-          this.temp.role = ""
+          this.temp.role = ''
           if (this.temp.roles.length != 0) {
             this.temp.role = this.temp.roles[0]
           }
@@ -335,17 +339,17 @@ export default {
     handleUpdate(row) {
       this.temp = Object.assign({}, row) // copy obj
       // 获取当前管理员的角色列表
-      getAdministratorRole({username:row.username}).then(response => {
-        const temp = [];
+      getAdministratorRole({ username: row.username }).then(response => {
+        const temp = []
         response.data.roles.forEach(element => {
           console.log(element)
           temp.push([element])
-        });
+        })
         this.temp.roles = response.data.roles
         this.selectedRoles = temp
       })
 
-      this.isDisabled = true;
+      this.isDisabled = true
       this.dialogStatus = 'update'
       this.dialogFormVisible = true
       this.setOptions()
@@ -357,7 +361,7 @@ export default {
       this.$refs['dataForm'].validate((valid) => {
         if (valid) {
           const tempData = Object.assign({}, this.temp)
-          tempData.role = ""
+          tempData.role = ''
           if (tempData.roles.length != 0) {
             tempData.role = tempData.roles[0]
           }
@@ -376,11 +380,11 @@ export default {
         }
       })
     },
-    saveAdministratorRole(username, roles){
-      saveAdministratorRole({username:username, roles:roles})
+    saveAdministratorRole(username, roles) {
+      saveAdministratorRole({ username: username, roles: roles })
     },
     handleDelete(row, index) {
-      deleteAdministrator({id:row.id}).then(() => {
+      deleteAdministrator({ id: row.id }).then(() => {
         this.list[index].deletedAt = getDate()
         this.$notify({
           title: 'Success',
@@ -391,8 +395,8 @@ export default {
       })
     },
     handleRecover(row, index) {
-      recoverAdministrator({id:row.id}).then(() => {
-        this.list[index].deletedAt = ""
+      recoverAdministrator({ id: row.id }).then(() => {
+        this.list[index].deletedAt = ''
         this.$notify({
           title: 'Success',
           message: '恢复成功',
@@ -402,7 +406,7 @@ export default {
       })
     },
     handleForbid(row, index) {
-      forbidAdministrator({id:row.id}).then(() => {
+      forbidAdministrator({ id: row.id }).then(() => {
         this.list[index].status = 2
         this.$notify({
           title: 'Success',
@@ -413,7 +417,7 @@ export default {
       })
     },
     handleApprove(row, index) {
-      approveAdministrator({id:row.id}).then(() => {
+      approveAdministrator({ id: row.id }).then(() => {
         this.list[index].status = 1
         this.$notify({
           title: 'Success',
@@ -424,14 +428,14 @@ export default {
       })
     },
     handleChange(value) {
-      this.temp.roles = [];
+      this.temp.roles = []
       value.forEach(element => {
         this.temp.roles.push(element[0])
-      });
+      })
     },
     setOptions() {
       this.roleOptions = [
-        
+
       ]
       this.setRoleOptions(this.roleList, this.roleOptions)
     },
@@ -447,18 +451,18 @@ export default {
             }
             this.setRoleOptions(
               item.children,
-              option.children,
+              option.children
             )
             optionsData.push(option)
           } else {
             const option = {
               id: item.id,
-              name: item.name,
+              name: item.name
             }
             optionsData.push(option)
           }
         })
-    },
+    }
   }
 }
 </script>
