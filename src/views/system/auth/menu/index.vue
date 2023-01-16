@@ -7,7 +7,7 @@
     </div>
     <el-table :data="list" row-key="id" style="width: 100%">
       <el-table-column label="菜单ID" min-width="180" prop="id" align="center" />
-      <el-table-column label="父菜单ID" min-width="180" prop="parentId" align="center" />
+      <el-table-column label="父菜单ID" min-width="180" prop="parent_id" align="center" />
       <el-table-column label="菜单名称" min-width="180" prop="title" align="center" />
       <el-table-column label="图标" min-width="180" prop="icon" align="center">
         <template #default="scope">
@@ -28,12 +28,12 @@
       <el-table-column label="文件路径" min-width="180" prop="component" align="center" />
       <el-table-column label="创建时间" prop="createdAt" min-width="180">
         <template slot-scope="{row}">
-          <span>{{ row.createdAt | timeToDay }}</span>
+          <span>{{ row.created_at | timeToDay }}</span>
         </template>
       </el-table-column>
       <el-table-column label="更新时间" prop="updatedAt" min-width="180">
         <template slot-scope="{row}">
-          <span>{{ row.updatedAt | timeToDay }}</span>
+          <span>{{ row.updated_at | timeToDay }}</span>
         </template>
       </el-table-column>
       <el-table-column label="操作" width="250" class-name="small-padding fixed-width" fixed="right">
@@ -57,8 +57,8 @@
         <el-form-item label="ID" prop="id" v-if="dialogStatus === 'update'">
           <el-input v-model="temp.id" />
         </el-form-item>
-        <el-form-item label="父级菜单" prop="parentIds">
-          <el-cascader v-model="temp.parentIds" :options="menuOptions" style="width:100%"
+        <el-form-item label="父级菜单" prop="parent_ids">
+          <el-cascader v-model="temp.parent_ids" :options="menuOptions" style="width:100%"
             :props="{ checkStrictly: true, label: 'title', value: 'id', emitPath: 'true' }" :show-all-levels="false"
             @change="handleChange">
           </el-cascader>
@@ -161,7 +161,7 @@ export default {
         title: undefined,
         icon: undefined,
         redirect: undefined,
-        parentIds:[],
+        parent_ids:[],
         menuBtns: [],
       },
       dialogFormVisible: false,
@@ -204,20 +204,20 @@ export default {
         title: undefined,
         icon: undefined,
         redirect: undefined,
-        parentIds:[],
+        parent_ids:[],
         menuBtns: [],
       }
       this.menuBtns = []
     },
     handleChange(value) {
-      this.temp.parentIds = value
+      this.temp.parent_ids = value
     },
-    handleCreate(parentId) {
+    handleCreate(parent_id) {
       this.resetTemp()
       this.dialogStatus = 'create'
       this.dialogFormVisible = true
-      if (parentId == 0) {
-        this.temp.parentIds = [0]
+      if (parent_id == 0) {
+        this.temp.parent_ids = [0]
       }
       this.setOptions()
       this.$nextTick(() => {
@@ -225,7 +225,7 @@ export default {
       })
     },
     createData() {
-      this.temp.parentId = this.temp.parentIds[this.temp.parentIds.length - 1]
+      this.temp.parent_id = this.temp.parent_ids[this.temp.parent_ids.length - 1]
       this.temp.menuBtns = this.menuBtns
       this.$refs['dataForm'].validate((valid) => {
         if (valid) {
@@ -246,8 +246,8 @@ export default {
       this.temp = Object.assign({}, row) // copy obj
       this.dialogStatus = 'update'
       this.dialogFormVisible = true
-      if (row.parentId == "0") {
-        this.temp.parentIds = [0]
+      if (row.parent_id == "0") {
+        this.temp.parent_ids = [0]
       }
       this.setOptions()
       this.menuBtns = row.menuBtns
@@ -256,7 +256,7 @@ export default {
       })
     },
     updateData() {
-      this.temp.parentId = this.temp.parentIds[this.temp.parentIds.length - 1]
+      this.temp.parent_id = this.temp.parent_ids[this.temp.parent_ids.length - 1]
       this.temp.menuBtns = this.menuBtns
       this.$refs['dataForm'].validate((valid) => {
         if (valid) {
@@ -318,8 +318,6 @@ export default {
           }
         })
     },
-    handleChange(value) {
-    },
     // 新增按钮
     addBtn() {
       if (!this.menuBtns) {
@@ -339,12 +337,12 @@ export default {
       this.dialogStatus = 'create'
       this.dialogFormVisible = true
       // 删除首个根元素
-      var tmpParentIds = row.parentIds
-      if (row.parentIds[0] == "0") {
-        tmpParentIds.pop()
+      var tmpparent_ids = row.parent_ids
+      if (row.parent_ids[0] == "0") {
+        tmpparent_ids.pop()
       }
-      tmpParentIds.push(row.id + '')
-      this.temp.parentIds = tmpParentIds
+      tmpparent_ids.push(row.id + '')
+      this.temp.parent_ids = tmpparent_ids
       this.setOptions()
       this.$nextTick(() => {
         this.$refs['dataForm'].clearValidate()

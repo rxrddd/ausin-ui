@@ -67,27 +67,27 @@
       </el-table-column>
       <el-table-column label="登录时间" prop="lastLoginTime" align="center">
         <template slot-scope="{row}">
-          <span>{{ row.lastLoginTime  | timeToDay}}</span>
+          <span>{{ row.last_login_time  | timeToDay}}</span>
         </template>
       </el-table-column>
       <el-table-column label="登录ip" prop="lastLoginIp" align="center">
         <template slot-scope="{row}">
-          <span>{{ row.lastLoginIp }}</span>
+          <span>{{ row.last_login_ip }}</span>
         </template>
       </el-table-column>
       <el-table-column label="创建时间" prop="createdAt" align="center">
         <template slot-scope="{row}">
-          <span>{{ row.createdAt | timeToDay}}</span>
+          <span>{{ row.created_at | timeToDay}}</span>
         </template>
       </el-table-column>
       <el-table-column label="更新时间" prop="updatedAt" align="center">
         <template slot-scope="{row}">
-          <span>{{ row.updatedAt | timeToDay}}</span>
+          <span>{{ row.updated_at | timeToDay}}</span>
         </template>
       </el-table-column>
       <el-table-column label="删除时间" prop="updatedAt" align="center">
         <template slot-scope="{row}">
-          <span>{{ row.deletedAt | timeToDay}}</span>
+          <span>{{ row.deleted_at | timeToDay}}</span>
         </template>
       </el-table-column>
       <el-table-column label="操作" align="center" width="250" class-name="small-padding fixed-width">
@@ -95,10 +95,10 @@
           <el-button type="primary" size="mini" @click="handleUpdate(row)" v-if="checkBtnPermission('updateAdministrator')">
             编辑
           </el-button>
-          <el-button v-if="row.deletedAt == '' && checkBtnPermission('deleteRecoverAdministrator')" size="mini" type="danger" @click="handleDelete(row,$index)">
+          <el-button v-if="row.deleted_at == '' && checkBtnPermission('deleteRecoverAdministrator')" size="mini" type="danger" @click="handleDelete(row,$index)">
             删除
           </el-button>
-          <el-button v-if="row.deletedAt != '' && checkBtnPermission('deleteRecoverAdministrator') " size="mini" type="success" @click="handleRecover(row,$index)">
+          <el-button v-if="row.deleted_at != '' && checkBtnPermission('deleteRecoverAdministrator') " size="mini" type="success" @click="handleRecover(row,$index)">
             恢复
           </el-button>
           <el-button v-if="row.status == '1' && checkBtnPermission('forbidAApproveAdministrator')" size="mini" type="warning" @click="handleForbid(row,$index)">
@@ -229,7 +229,6 @@ export default {
         mobile: undefined,
         nickname: undefined,
         avatar: undefined,
-        status: undefined,
         roles: undefined,
       },
       dialogFormVisible: false,
@@ -298,7 +297,6 @@ export default {
         mobile: undefined,
         nickname: undefined,
         avatar: undefined,
-        status: undefined,
         roles: undefined,
       }
     },

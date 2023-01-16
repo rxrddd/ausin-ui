@@ -16,7 +16,6 @@ export function getBaseMenuTree(params) {
   })
 }
 
-
 export function createMenu(data) {
   return request({
     url: '/authorization/v1/menu',

@@ -51,12 +51,12 @@
       </el-table-column>
       <el-table-column label="创建时间" prop="createdAt" align="center">
         <template slot-scope="{row}">
-          <span>{{ row.createdAt | timeToDay}}</span>
+          <span>{{ row.created_at | timeToDay}}</span>
         </template>
       </el-table-column>
       <el-table-column label="更新时间" prop="updatedAt" align="center">
         <template slot-scope="{row}">
-          <span>{{ row.updatedAt | timeToDay}}</span>
+          <span>{{ row.updated_at | timeToDay}}</span>
         </template>
       </el-table-column>
       <el-table-column label="操作" align="center" width="250" class-name="small-padding fixed-width">

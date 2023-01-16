@@ -1,5 +1,5 @@
 module.exports = {
-  title: 'Kratos base project',
+  title: 'austin ui',
 
   /**
    * @type {boolean} true | false

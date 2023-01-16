@@ -64,7 +64,7 @@ export const constantRoutes = [
         meta: { title: '工作台', icon: 'dashboard', affix: true }
       }
     ]
-  }
+  },
 ]
 
 /**

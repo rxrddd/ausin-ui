@@ -1,6 +1,6 @@
 import defaultSettings from '@/settings'
 
-const title = defaultSettings.title || 'Kratos base project'
+const title = defaultSettings.title || 'austin ui'
 
 export default function getPageTitle(pageTitle) {
   if (pageTitle) {
