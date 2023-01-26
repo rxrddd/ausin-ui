@@ -3,7 +3,7 @@ import request from '@/utils/request'
 export function templateEdit(data) {
   return request({
     url: '/gmp_platform/template/edit',
-    method: 'get',
+    method: 'post',
     data
   })
 }
@@ -17,6 +17,12 @@ export function templateChangeStatus(data) {
 export function templateList(params) {
   return request({
     url: '/gmp_platform/template/list',
+    method: 'get',
+    params
+  })
+}export function templateOne(params) {
+  return request({
+    url: '/gmp_platform/template/one',
     method: 'get',
     params
   })

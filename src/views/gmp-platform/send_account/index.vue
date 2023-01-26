@@ -127,6 +127,7 @@ import checkBtnPermission from '@/utils/permission'
 import { sendAccountChangeStatus, sendAccountEdit, sendAccountList } from '@/api/gmp-platform/send_account'
 import { getAllChannel } from '@/api/gmp-platform/msg'
 import JsonEditor from '@/components/JsonEditor/index.vue'
+import { updateAdministrator } from '@/api/administrator'
 
 export default {
   name: 'Template',
@@ -225,18 +226,22 @@ export default {
       })
     },
     editData() {
-      sendAccountEdit({
-        ...this.form,
-        config: JSON.stringify(JSON.parse(this.$refs.formJsonRef.getValue()))
-      }).then(() => {
-        this.$notify({
-          title: '提示',
-          message: '操作成功',
-          type: 'success',
-          duration: 1000
-        })
-        this.handleFilter()
-        this.formVisible = false
+      this.$refs['dataForm'].validate((valid) => {
+        if (valid) {
+          sendAccountEdit({
+            ...this.form,
+            config: JSON.stringify(JSON.parse(this.$refs.formJsonRef.getValue()))
+          }).then(() => {
+            this.$notify({
+              title: '提示',
+              message: '操作成功',
+              type: 'success',
+              duration: 1000
+            })
+            this.handleFilter()
+            this.formVisible = false
+          })
+        }
       })
     }
   }
